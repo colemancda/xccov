@@ -19,7 +19,31 @@
 
 import Foundation
 
+let exePath: URL = URL.init(fileURLWithPath: CommandLine.arguments[0])
+let productName: String = exePath.lastPathComponent
 var arguments = CommandLine.arguments.suffix(from: 1)
+
+let stdout: FileHandle = FileHandle.standardOutput
+
+if (arguments.contains("-v") || arguments.contains("--version")) {
+    print("\(productName) version 0.1")
+    exit(EXIT_SUCCESS)
+}
+
+if (arguments.contains("-h") || arguments.contains("--help")) {
+    let strings: [String] = [
+        "Usage: \(productName) [-f | --filePath]",
+        "       -f --filePath  JSON file path",
+        "" // これがないと末尾に%と出てしまうので、意図的に入れている
+    ]
+
+    if let data = strings.joined(separator:"\n").data(using: String.Encoding.utf8) {
+        stdout.write(data)
+    }
+
+    exit(EXIT_SUCCESS)
+}
+
 if !(arguments.contains("-f") || arguments.contains("--filePath")) {
     print("Error -f or --filePath is required.")
     exit(EXIT_FAILURE)
